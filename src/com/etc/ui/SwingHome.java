@@ -69,7 +69,7 @@ public class SwingHome extends BaseJFrame {
 		recentsList = messagesDao.getRecentUsersByUserName(ownuser.getName());
 		friendsList = friendsDao.getFriends(ownuser.getName());
 		groupsList = groupsDao.getGroupsByUsername(ownuser.getName());
-		
+
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 334, 642);
@@ -100,7 +100,7 @@ public class SwingHome extends BaseJFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// 设置点击事件
-				MyRecentJPanel();
+				initMyRecentJPanel();
 			}
 		});
 		sh_jl_recent.setHorizontalAlignment(SwingConstants.CENTER);
@@ -108,21 +108,7 @@ public class SwingHome extends BaseJFrame {
 		sh_jl_recent.setBounds(0, 124, 102, 53);
 		contentPane.add(sh_jl_recent);
 
-		/**
-		 * 群列表按钮，显示群列表
-		 */
-		sh_jl_group = new JLabel("\u7FA4");
-		sh_jl_group.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				MyGroupJPanel();
-				super.mousePressed(e);
-			}
-		});
-		sh_jl_group.setHorizontalAlignment(SwingConstants.CENTER);
-		sh_jl_group.setFont(new Font("华文隶书", Font.PLAIN, 16));
-		sh_jl_group.setBounds(213, 124, 108, 52);
-		contentPane.add(sh_jl_group);
+		
 
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 187, 318, 416);
@@ -136,7 +122,7 @@ public class SwingHome extends BaseJFrame {
 		panel.setLayout(new FlowLayout(FlowLayout.LEADING));
 
 		// 默认显示好友列表
-		MyFriendPanel();
+		initMyFriendPanel();
 		/**
 		 * 好友按钮,显示好友列表列表的登录界面
 		 */
@@ -146,7 +132,7 @@ public class SwingHome extends BaseJFrame {
 			public void mousePressed(MouseEvent e) {
 				// 单击事件
 				super.mousePressed(e);
-				MyFriendPanel();
+				initMyFriendPanel();
 			}
 		});
 		sh_jl_friend.setHorizontalAlignment(SwingConstants.CENTER);
@@ -154,29 +140,44 @@ public class SwingHome extends BaseJFrame {
 		sh_jl_friend.setBounds(112, 124, 91, 53);
 		contentPane.add(sh_jl_friend);
 
+		/**
+		 * 群列表按钮，显示群列表
+		 */
+		sh_jl_group = new JLabel("\u7FA4");
+		sh_jl_group.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				super.mousePressed(e);
+				//单击事件
+				initMyGroupJPanel();
+			}
+		});
+		sh_jl_group.setHorizontalAlignment(SwingConstants.CENTER);
+		sh_jl_group.setFont(new Font("华文隶书", Font.PLAIN, 16));
+		sh_jl_group.setBounds(213, 124, 108, 52);
+		contentPane.add(sh_jl_group);
 		setLocation(900, 40);
 	}
 
 	/**
 	 * 初始话群列表
 	 */
-	public void MyGroupJPanel() {
+	public void initMyGroupJPanel() {
 		panel.removeAll();
-		// 初始化最近聊天的界面
+		// 初始化群聊天界面
 		for (int i = 0; i < groupsList.size(); i++) {
 			Groups g = groupsList.get(i);
-			// System.out.println(u);
 			JLabel btn1 = new JLabel("");
-			btn1.setIcon(new ImageIcon("/img/aa.jpg"));
+			btn1.setIcon(new ImageIcon(g.getGroupimg()));
 			JLabel jl2 = new JLabel(g.getGroupname()
 					+ getFixedLength(g.getGroupname().length()));
 			jl2.setFont(new Font("华文隶书", Font.PLAIN, 25));
-			// 自定义容器
-			//MyJPanelSingle p = new MyJPanelSingle(g, ownuser);
-//			p.setBounds(0, 0, 318, 50);
-//			p.add(btn1);
-//			p.add(jl2);
-//			panel.add(p);
+			// 自定义群容器
+			MyJPanelGroup p = new MyJPanelGroup(g, ownuser);
+			p.setBounds(0, 0, 318, 50);
+			p.add(btn1);
+			p.add(jl2);
+			panel.add(p);
 			panel.setPreferredSize(new Dimension(50, 50 + i * 50 * 2));
 		}
 		panel.updateUI();
@@ -185,18 +186,17 @@ public class SwingHome extends BaseJFrame {
 	/**
 	 * 初始化最近聊天列表
 	 */
-	public void MyRecentJPanel() {
+	public void initMyRecentJPanel() {
 		panel.removeAll();
 		// 初始化最近聊天的界面
 		for (int i = 0; i < recentsList.size(); i++) {
 			Users u = recentsList.get(i);
-			// System.out.println(u);
 			JLabel btn1 = new JLabel("");
-			btn1.setIcon(new ImageIcon(u.getHeadimg().trim()));
+			btn1.setIcon(new ImageIcon("C:\\Users\\zhuzhen\\Pictures\\a3.png"));
 			JLabel jl2 = new JLabel(u.getName()
 					+ getFixedLength(u.getName().length()));
 			jl2.setFont(new Font("华文隶书", Font.PLAIN, 25));
-			// 自定义容器
+			// 自定义单聊容器
 			MyJPanelSingle p = new MyJPanelSingle(u, ownuser);
 			p.setBounds(0, 0, 318, 50);
 			p.add(btn1);
@@ -210,7 +210,7 @@ public class SwingHome extends BaseJFrame {
 	/**
 	 * 初始化好友列表
 	 */
-	public void MyFriendPanel() {
+	public void initMyFriendPanel() {
 		panel.removeAll();
 		// 初始化好友列表
 		for (int i = 0; i < friendsList.size(); i++) {

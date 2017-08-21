@@ -58,6 +58,10 @@ public class SwingSingleChat extends BaseJFrame{
 	 */
 	private void initialize() {
 		setBounds(100, 100, 665, 519);
+		setResizable(false);
+		/**
+		 * 设置关闭当前窗口
+		 */
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Already there
 		getContentPane().setLayout(null);
 		panel_north.setBounds(0, 5, 649, 86);
@@ -101,7 +105,7 @@ public class SwingSingleChat extends BaseJFrame{
 		 * 背景
 		 */
 		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon(SwingSingleChat.class.getResource("/img/aa.jpg")));
+		lblNewLabel.setIcon(new ImageIcon("img/aa.jpg"));
 		lblNewLabel.setBounds(0, 0, 162, 395);
 		panel_east.add(lblNewLabel);
 		
@@ -175,11 +179,13 @@ public class SwingSingleChat extends BaseJFrame{
 	 * 接受数据时调用的函数并且设置内容框
 	 * @param string
 	 */
+	@Override
 	public void appendText(String in) {
 		ssc_txt_content.append("\n" + in);
 		
 	}
-
+	
+	@Override
 	public void appendTextother(String in) {
 		ssc_txt_content.append("\n" + in);
 	}

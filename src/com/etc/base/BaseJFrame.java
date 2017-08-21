@@ -12,4 +12,8 @@ public class BaseJFrame extends JFrame {
 	public ArrayList<Users> friendsList = new ArrayList<>();
 	public ArrayList<Groups> groupsList= new ArrayList<>();
 	public ArrayList<Users> recentsList = new ArrayList<>();
+	public void appendTextother(String string) {	
+	}
+	public void appendText(String string) {
+	}
 }

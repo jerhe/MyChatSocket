@@ -11,6 +11,8 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 import com.bsb.test.main.Mainwindowtest;
+import com.etc.base.BaseJFrame;
+import com.etc.ui.SwingGroupChat;
 import com.etc.ui.SwingSingleChat;
 
 
@@ -26,7 +28,7 @@ public class ChatManager {
 		return instance;
 	}
 	
-	SwingSingleChat window;
+	BaseJFrame window;
 	String IP;
 	Socket socket;
 	BufferedReader reader;
@@ -36,7 +38,10 @@ public class ChatManager {
 		this.window = window;
 		
 	}
-	
+	public void setWindow(SwingGroupChat window) {
+		this.window = window;
+		
+	}
 	public void connect(String ip,String name) {
 		this.IP = ip;
         this.Name=name;

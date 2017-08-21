@@ -1,15 +1,11 @@
 package com.etc.ui;
 
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import com.bsb.tool.ChatManager;
 import com.etc.entity.Users;
-import com.etc.util.DataUtil;
 
 /**
  * 跳转到单聊界面

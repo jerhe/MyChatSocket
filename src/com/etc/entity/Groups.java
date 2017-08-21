@@ -10,26 +10,50 @@ public class Groups implements Serializable{
 	private String groupname;
 	private String username;
 	private int isadmin;
+	private String groupimg;
 	public Groups() {
 	}
 	
-	public Groups(String groupid, String groupname, String username, int isadmin) {
-		super();
-		this.groupid = groupid;
-		this.groupname = groupname;
-		this.username = username;
-		this.isadmin = isadmin;
-	}
-
-
 	public Groups(int id, String groupid, String groupname, String username,
-			int isadmin) {
+			int isadmin, String groupimg) {
 		super();
 		this.id = id;
 		this.groupid = groupid;
 		this.groupname = groupname;
 		this.username = username;
 		this.isadmin = isadmin;
+		this.groupimg = groupimg;
+	}
+
+
+	public Groups(String groupid, String groupname, String username,
+			int isadmin, String groupimg) {
+		super();
+		this.groupid = groupid;
+		this.groupname = groupname;
+		this.username = username;
+		this.isadmin = isadmin;
+		this.groupimg = groupimg;
+	}
+
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Groups [id=");
+		builder.append(id);
+		builder.append(", groupid=");
+		builder.append(groupid);
+		builder.append(", groupname=");
+		builder.append(groupname);
+		builder.append(", username=");
+		builder.append(username);
+		builder.append(", isadmin=");
+		builder.append(isadmin);
+		builder.append(", groupimg=");
+		builder.append(groupimg);
+		builder.append("]");
+		return builder.toString();
 	}
 
 
@@ -63,22 +87,13 @@ public class Groups implements Serializable{
 	public void setIsadmin(int isadmin) {
 		this.isadmin = isadmin;
 	}
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Groups [id=");
-		builder.append(id);
-		builder.append(", groupid=");
-		builder.append(groupid);
-		builder.append(", groupname=");
-		builder.append(groupname);
-		builder.append(", username=");
-		builder.append(username);
-		builder.append(", isadmin=");
-		builder.append(isadmin);
-		builder.append("]");
-		return builder.toString();
+	public String getGroupimg() {
+		return groupimg;
 	}
+	public void setGroupimg(String groupimg) {
+		this.groupimg = groupimg;
+	}
+	
 	
 	
 }

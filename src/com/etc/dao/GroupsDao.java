@@ -33,7 +33,8 @@ public class GroupsDao extends DBUTIL {
 				String groupid =crs.getString("groupid");
 				String groupname=crs.getString("groupname");
 				int isadmin=crs.getInt("isadmin");
-				Groups g= new Groups(id,groupid,groupname,username,isadmin);
+				String groupimg =crs.getString("groupimg");
+				Groups g= new Groups(id,groupid,groupname,username,isadmin,groupimg);
 				list.add(g);
 			}
 		} catch (SQLException e) {
@@ -68,7 +69,7 @@ public class GroupsDao extends DBUTIL {
 	 * @param g
 	 */
 	public void addGroups(Groups g) {
-		String sql = "insert into groups vlaues(null,?,?,?,?)";
+		String sql = "insert into groups vlaues(null,?,?,?,?,?)";
 		execUpdate(sql, g.getGroupid(), g.getGroupname(), g.getUsername(),0);
 	}
 
@@ -100,12 +101,21 @@ public class GroupsDao extends DBUTIL {
 	public synchronized boolean createGroups(String groupname,String username){
 		Date date= new Date();
 		String groupid = date.getTime()+"";
-		String sql = "insert into groups vlaues(null,?,?,?,?)";
-		if(execUpdate(sql,groupid,groupname,username,1)==0){
+		String sql = "insert into groups vlaues(null,?,?,?,?,?)";
+		if(execUpdate(sql,groupid,groupname,username,1,"/img/bb.jpg")==0){
 			return false;
 		}else{
 			return true;
 		}
 		
+	}
+	
+	/**
+	 * 管理员更新群头像
+	 * @param url
+	 */
+	public void updateGroupImgByGroupId(int groupid ,String url){
+		String sql ="update groups set groupimg =? where groupid=?";
+		execUpdate(sql, groupid,url);
 	}
 }

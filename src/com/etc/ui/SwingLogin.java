@@ -89,25 +89,7 @@ public class SwingLogin extends BaseJFrame {
 		
 		sl_txt_name = new JTextField();
 		sl_txt_name.setForeground(new Color(0, 0, 0));
-		sl_txt_name.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (sl_txt_name.getText().equals("")) {
-					sl_txt_name.setText("用户名");
-					sl_txt_name.setForeground(new Color(192, 192, 192));
-					sl_txt_name.setFont(new Font("宋体", Font.PLAIN, 14));
-				}
-			}
-
-			@Override
-			public void focusGained(FocusEvent e) {
-				if (!sl_txt_name.getText().equals("用户名")) {
-					sl_txt_name.setText("");
-				}
-				sl_txt_name.setForeground(new Color(5, 5, 5));
-				sl_txt_name.setFont(new Font("宋体", Font.PLAIN, 14));
-			}
-		});
+		sl_txt_name.addFocusListener(new MyFocusListener("用户名", sl_txt_name));
 		sl_txt_name.setBounds(171, 200, 170, 30);
 		contentPane.add(sl_txt_name);
 		sl_txt_name.setColumns(10);
@@ -170,11 +152,6 @@ public class SwingLogin extends BaseJFrame {
 		contentPane.add(sl_btn_lg);
 
 		sl_txt_pwd = new JPasswordField();
-		sl_txt_pwd.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-			}
-		});
 		sl_txt_pwd.setBounds(171, 231, 170, 30);
 		contentPane.add(sl_txt_pwd);
 	}
