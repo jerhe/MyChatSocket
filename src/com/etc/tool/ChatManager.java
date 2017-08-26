@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -28,7 +29,7 @@ public class ChatManager {
 	public static ChatManager getCM() {
 		return instance;
 	}
-
+	private static Vector<BaseJFrame> windowlist = new Vector<>();
 	BaseJFrame window;
 	String IP;
 	Socket socket;
@@ -36,12 +37,14 @@ public class ChatManager {
 	PrintWriter writer;
 
 	public void setWindow(SwingSingleChat window) {
-		this.window = window;
+		//this.window = window;
+		windowlist.add(window);
 
 	}
 
 	public void setWindow(SwingGroupChat window) {
-		this.window = window;
+		//this.window = window;
+		windowlist.add(window);
 
 	}
 
@@ -76,15 +79,24 @@ public class ChatManager {
 						 * 群消息
 						 * msgid ownuser.getName() groupid           nowtime ssl_txt_send.getText()
 						 */
-						window.appendTextother(newStr[1] + newStr[3] + ":\n"
-								+ newStr[4],newStr[1],newStr[2],
-								Integer.valueOf(newStr[0]));
+						for (BaseJFrame w : windowlist) {
+							window=w;
+							window.appendTextother(newStr[1] + newStr[3] + ":\n"
+									+ newStr[4],newStr[1],newStr[2],
+									Integer.valueOf(newStr[0]));
+						}
+						
 					}
 					writer.close();
 					reader.close();
 					writer = null;
 					reader = null;
-				} catch (UnknownHostException e) {
+				} catch(NullPointerException e){
+					System.out.println("Vecter:"+windowlist.size());
+					windowlist.remove(window);
+					System.out.println("Vecter:"+windowlist.size());
+				}
+				catch (UnknownHostException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -99,7 +111,9 @@ public class ChatManager {
 			writer.write(out + "\n");
 			writer.flush();
 		} else {
-			window.appendText("连接到的数据流为空");
+			for (BaseJFrame window : windowlist) {
+				window.appendText("连接失败");
+			}
 		}
 	}
 }

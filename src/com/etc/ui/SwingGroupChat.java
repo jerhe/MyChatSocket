@@ -238,7 +238,7 @@ public class SwingGroupChat extends BaseJFrame {
 
 					appendText(ownuser.getName() + " " + nowtime + " " + " ："
 							+ "\n" + sgc_txt_send.getText());
-					sgc_txt_send.setText(null);
+					sgc_txt_send.setText("");
 				} else {
 					DataUtil.showMessage("发送的消息不能为空！");
 				}
@@ -290,6 +290,7 @@ public class SwingGroupChat extends BaseJFrame {
 	@Override
 	public void appendText(String in) {
 		sgc_txt_content.append("\n" + in);
+		isNeedBottom=0;
 
 	}
 

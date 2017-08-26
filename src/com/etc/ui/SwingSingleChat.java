@@ -253,6 +253,7 @@ public class SwingSingleChat extends BaseJFrame {
 		// ssc_txt_content.setCaretPosition(row);
 		// ssc_txt_content.set
 		ssc_txt_content.append("\n" + in);
+		isNeedBottom=0;
 	}
 
 	/**
@@ -317,7 +318,6 @@ public class SwingSingleChat extends BaseJFrame {
 			// System.out.println(textArea.getText());
 			appendText(ownuser.getName() + " " + nowtime + " " + "£º" + "\n"
 					+ ssl_txt_send.getText());
-			isNeedBottom=0;
 			ssl_txt_send.setText("");
 		} else {
 			ssl_txt_send.setText("");
