@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -60,15 +62,17 @@ public class SwingSingleChat extends BaseJFrame {
 	private Socket socket;
 	private ArrayList<Messages> unreadMessages;
 	private JPanel panel;
+	private int isNeedBottom;
 
 	/**
 	 * 初始化窗体
 	 */
 	public SwingSingleChat(Users u, Users own) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(SwingSingleChat.class.getResource("/pic/chat.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				SwingSingleChat.class.getResource("/pic/chat.png")));
 		tousers = u;
 		ownuser = own;
-		setTitle("与"+u.getName());
+		setTitle("与" + u.getName());
 		initialize();
 	}
 
@@ -93,7 +97,7 @@ public class SwingSingleChat extends BaseJFrame {
 						"提示", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
-					//frame.dispose();
+					// frame.dispose();
 					frame.setVisible(false);
 				}
 			}
@@ -151,6 +155,21 @@ public class SwingSingleChat extends BaseJFrame {
 
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 488, 105);
+
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(
+				new AdjustmentListener() {
+					public void adjustmentValueChanged(AdjustmentEvent evt) {
+						if (evt.getAdjustmentType() == AdjustmentEvent.TRACK
+								&& isNeedBottom <= 3) {
+							scrollPane.getVerticalScrollBar().setValue(
+									scrollPane.getVerticalScrollBar()
+											.getModel().getMaximum()
+											- scrollPane.getVerticalScrollBar()
+													.getModel().getExtent());
+							isNeedBottom++;
+						}
+					}
+				});
 		panel_floor.add(scrollPane);
 
 		ssl_txt_send = new JTextArea();
@@ -158,7 +177,7 @@ public class SwingSingleChat extends BaseJFrame {
 		ssl_txt_send.setLineWrap(true);
 		ssl_txt_send.setFont(new Font("Monospaced", Font.PLAIN, 16));
 		scrollPane.setViewportView(ssl_txt_send);
-		
+
 		/**
 		 * 添加监听键盘监听
 		 */
@@ -167,7 +186,14 @@ public class SwingSingleChat extends BaseJFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
 					send();
-					
+
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					ssl_txt_send.setText("");
 				}
 			}
 		});
@@ -180,6 +206,7 @@ public class SwingSingleChat extends BaseJFrame {
 		scrollPane_1.setBounds(0, 86, 488, 251);
 		getContentPane().add(scrollPane_1);
 		ssc_txt_content = new JTextArea();
+		ssc_txt_content.setLineWrap(true);
 		ssc_txt_content.setFont(new Font("Monospaced", Font.PLAIN, 16));
 		ssc_txt_content.setEnabled(false);
 		ssc_txt_content.setEditable(false);
@@ -199,7 +226,7 @@ public class SwingSingleChat extends BaseJFrame {
 		});
 		ssc_btn_send.setBounds(369, 110, 105, 23);
 		panel_floor.add(ssc_btn_send);
-		
+
 		panel = new JPanel();
 		panel.setBounds(0, 0, 694, 532);
 		getContentPane().add(panel);
@@ -222,6 +249,9 @@ public class SwingSingleChat extends BaseJFrame {
 	 */
 	@Override
 	public void appendText(String in) {
+		// int row=ssc_txt_content.getLineStartOffset();
+		// ssc_txt_content.setCaretPosition(row);
+		// ssc_txt_content.set
 		ssc_txt_content.append("\n" + in);
 	}
 
@@ -238,6 +268,7 @@ public class SwingSingleChat extends BaseJFrame {
 			MessagesDao messagesDao = new MessagesDao();
 			if (messagesDao.isReadById(msgid)) {
 				ssc_txt_content.append("\n" + in);
+				isNeedBottom=0;
 				messagesDao.setRead(msgid);
 			}
 		}
@@ -261,35 +292,37 @@ public class SwingSingleChat extends BaseJFrame {
 
 		try {
 			socket = new Socket(DataUtil.IPSTRING, 8066);
-			ChatManager.getCM().connect(DataUtil.IPSTRING, ownuser.getName(), socket);
+			ChatManager.getCM().connect(DataUtil.IPSTRING, ownuser.getName(),
+					socket);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void send(){
+
+	private void send() {
 		if (!ssl_txt_send.getText().trim().equals("")) {
 			Date now = new Date();
 			String nowtime = DataUtil.dateToString(now);
 			// 保存信息到数据库
-			Messages newmsg = new Messages(ownuser.getName(), tousers
-					.getName(), ssl_txt_send.getText(), nowtime, 1);
+			Messages newmsg = new Messages(ownuser.getName(),
+					tousers.getName(), ssl_txt_send.getText(), nowtime, 1);
 			int msgid = messagesDao.saveMessage(newmsg);
 			String sendString = msgid + "@" + ownuser.getName() + "@"
 					+ tousers.getName() + "@ " + nowtime + " " + "@"
-					+ ssl_txt_send.getText();
+					+ ssl_txt_send.getText().replace("\n", "");
 			ChatManager.getCM().send(sendString);
 
 			// System.out.println(textArea.getText());
-			appendText(ownuser.getName() + " " + nowtime + " " + "："
-					+ "\n" + ssl_txt_send.getText());
+			appendText(ownuser.getName() + " " + nowtime + " " + "：" + "\n"
+					+ ssl_txt_send.getText());
+			isNeedBottom=0;
 			ssl_txt_send.setText("");
 		} else {
 			ssl_txt_send.setText("");
 			DataUtil.showMessage("消息不能为空");
-			
+
 		}
 	}
 }

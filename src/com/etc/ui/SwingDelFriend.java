@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -85,8 +86,13 @@ public class SwingDelFriend extends BaseJFrame {
 		scrollPane.setBounds(56, 107, 278, 227);
 		contentPane.add(scrollPane);
 
-		table = new JTable();
-		table.setEnabled(false);
+		table = new JTable() {
+			public boolean isCellEditable(int rowIndex, int ColIndex) {
+				return false;
+			}
+		};
+		table.getSelectionModel().setSelectionMode(
+				ListSelectionModel.SINGLE_SELECTION);
 		table.setRowHeight(29);
 		scrollPane.setViewportView(table);
 

@@ -24,6 +24,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import com.etc.base.BaseJFrame;
 import com.etc.dao.FriendsDao;
@@ -253,10 +254,13 @@ public class SwingSearch extends BaseJFrame {
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		getContentPane().add(scrollPane);
 
-		table = new JTable();
-		table.setCellSelectionEnabled(true);
-		table.setColumnSelectionAllowed(true);
-		table.setEnabled(false);
+		table = new JTable() {
+			public boolean isCellEditable(int rowIndex, int ColIndex) {
+				return false;
+			}
+		};
+		table.getSelectionModel().setSelectionMode(
+				ListSelectionModel.SINGLE_SELECTION);
 		table.setRowHeight(25);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
@@ -524,25 +528,27 @@ public class SwingSearch extends BaseJFrame {
 					if (grouplist.size() > ((nowPage - 1) * STRIP + row)) {
 						String groupid = grouplist.get((nowPage - 1) * STRIP
 								+ row);
-						if(groupsDao.intoGroupByGroupid(groupid,ownuser.getName())){
+						if (groupsDao.intoGroupByGroupid(groupid,
+								ownuser.getName())) {
 							DataUtil.showMessage("添加成功");
-						}else{
+						} else {
 							DataUtil.showMessage("已加入该群");
 						}
-						
+
 					}
 				}
-				
+
 				/**
 				 * 通过群名查找
 				 */
-				if(flag == 2){
+				if (flag == 2) {
 					if (grouplist.size() > ((nowPage - 1) * STRIP + row)) {
 						String groupname = grouplist.get((nowPage - 1) * STRIP
 								+ row);
-						if(groupsDao.intoGroupByGroupname(groupname,ownuser.getName())){
+						if (groupsDao.intoGroupByGroupname(groupname,
+								ownuser.getName())) {
 							DataUtil.showMessage("添加成功");
-						}else{
+						} else {
 							DataUtil.showMessage("已加入该群");
 						}
 					}

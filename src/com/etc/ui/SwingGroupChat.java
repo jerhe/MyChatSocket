@@ -14,6 +14,8 @@ import javax.swing.JList;
 
 import java.awt.Color;
 import java.awt.SystemColor;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -71,6 +73,8 @@ public class SwingGroupChat extends BaseJFrame {
 	private Socket socket;
 	private DefaultListModel<String> dlm = new DefaultListModel<String>();
 	private JPanel panel;
+	private JScrollPane scrollPane_2;
+	private int isNeedBottom;
 
 	/**
 	 * 构造函数
@@ -167,11 +171,26 @@ public class SwingGroupChat extends BaseJFrame {
 		 * 群消息内容框
 		 */
 
-		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setBounds(0, 89, 488, 245);
+		scrollPane_2.getVerticalScrollBar().addAdjustmentListener(
+				new AdjustmentListener() {
+					public void adjustmentValueChanged(AdjustmentEvent evt) {
+						if (evt.getAdjustmentType() == AdjustmentEvent.TRACK
+								&& isNeedBottom <= 3) {
+							scrollPane_2.getVerticalScrollBar().setValue(
+									scrollPane_2.getVerticalScrollBar()
+											.getModel().getMaximum()
+											- scrollPane_2.getVerticalScrollBar()
+													.getModel().getExtent());
+							isNeedBottom++;
+						}
+					}
+				});
 		getContentPane().add(scrollPane_2);
 
 		sgc_txt_content = new JTextArea();
+		sgc_txt_content.setLineWrap(true);
 		sgc_txt_content.setFont(new Font("Monospaced", Font.PLAIN, 16));
 		sgc_txt_content.setEnabled(false);
 		sgc_txt_content.setEditable(false);
@@ -253,6 +272,12 @@ public class SwingGroupChat extends BaseJFrame {
 					send();
 				}
 			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					sgc_txt_send.setText("");
+				}
+			}
 		});
 
 	}
@@ -273,6 +298,7 @@ public class SwingGroupChat extends BaseJFrame {
 			int gmsgid) {
 		if (groupid.equals(groups.getGroupid())) {
 			sgc_txt_content.append("\n" + in);
+			isNeedBottom=0;
 			groupMessagesDao.setRead(gmsgid);
 		}
 
@@ -314,11 +340,12 @@ public class SwingGroupChat extends BaseJFrame {
 
 			String sendString = gmsgid + "@" + ownuser.getName() + "@"
 					+ groups.getGroupid() + "@ " + nowtime + " @"
-					+ sgc_txt_send.getText();
+					+ sgc_txt_send.getText().replace("\n", "");
 			ChatManager.getCM().send(sendString);
 
 			appendText(ownuser.getName() + " " + nowtime + " " + " ：" + "\n"
-					+ sgc_txt_send.getText());
+					+ sgc_txt_send.getText().replace("\n", ""));
+			isNeedBottom=0;
 			sgc_txt_send.setText("");
 		} else {
 			sgc_txt_send.setText("");
