@@ -258,9 +258,8 @@ public class SwingUpdate extends BaseJFrame {
 				usersDao.updateUsers(newUsers, ownuser.getName());
 				DataUtil.showMessage("修改资料成功请重新登录");
 				usersDao.setUnOnlineById(ownuser.getId());
-				homeFrame.getLoginFrame().clear();
-				homeFrame.getLoginFrame().setVisible(true);
-				homeFrame.dispose();
+				//homeFrame.dispose();
+				homeFrame.UpdateUI(newUsers);
 				dispose();
 			}
 		});

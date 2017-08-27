@@ -69,7 +69,7 @@ public class SwingHome extends BaseJFrame {
 	private JButton sh_btn_add;
 	private SwingLogin loginFrame;
 	private SwingHome homeFrame;
-
+	
 	// private ArrayList<Users>
 
 	/**
@@ -429,8 +429,14 @@ public class SwingHome extends BaseJFrame {
 	public void setHomeFrame(SwingHome h) {
 		this.homeFrame = h;
 	}
-
+	
 	public SwingLogin getLoginFrame() {
 		return loginFrame;
+	}
+	
+	public void UpdateUI(Users u){
+		ownuser=u;
+		sh_jl_remark.setText(u.getRemark());
+		
 	}
 }
