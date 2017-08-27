@@ -42,6 +42,7 @@ import com.etc.dao.UsersDao;
 import com.etc.entity.GroupMessages;
 import com.etc.entity.Groups;
 import com.etc.entity.Messages;
+import com.etc.entity.SendFlag;
 import com.etc.entity.Users;
 import com.etc.tool.ChatManager;
 import com.etc.util.DataUtil;
@@ -74,8 +75,7 @@ public class SwingGroupChat extends BaseJFrame {
 	private DefaultListModel<String> dlm = new DefaultListModel<String>();
 	private JPanel panel;
 	private JScrollPane scrollPane_2;
-	private int isNeedBottom;
-	private boolean sendflag=false;
+	private SendFlag sendFlag = new SendFlag();
 
 	/**
 	 * ¹¹Ôìº¯Êý
@@ -178,14 +178,14 @@ public class SwingGroupChat extends BaseJFrame {
 				new AdjustmentListener() {
 					public void adjustmentValueChanged(AdjustmentEvent evt) {
 						if (evt.getAdjustmentType() == AdjustmentEvent.TRACK
-								&& isNeedBottom <= 3) {
+								&& sendFlag.getIsNeedBottom() <= 3) {
 							scrollPane_2.getVerticalScrollBar().setValue(
 									scrollPane_2.getVerticalScrollBar()
 											.getModel().getMaximum()
 											- scrollPane_2
 													.getVerticalScrollBar()
 													.getModel().getExtent());
-							isNeedBottom++;
+							sendFlag.addIsNeedBottom();
 						}
 					}
 				});
@@ -237,7 +237,7 @@ public class SwingGroupChat extends BaseJFrame {
 							+ groups.getGroupid() + "@ " + nowtime + " @"
 							+ sgc_txt_send.getText();
 					ChatManager.getCM().send(sendString);
-					sendflag=true;
+					sendFlag.setSendflag(true);
 					appendText(ownuser.getName() + " " + nowtime + " " + " £º"
 							+ "\n" + sgc_txt_send.getText());
 					sgc_txt_send.setText("");
@@ -292,18 +292,14 @@ public class SwingGroupChat extends BaseJFrame {
 	 */
 	@Override
 	public void appendText(String in) {	
-		if(DataUtil.setContent(sgc_txt_content, in, sendflag)){
-			isNeedBottom=0;
-		}
+		DataUtil.setContent(sgc_txt_content, in,sendFlag);
 	}
 
 	@Override
 	public void appendTextother(String in, String fromnname, String groupid,
 			int gmsgid) {
 		if (groupid.equals(groups.getGroupid())) {
-			DataUtil.readGroupMessage(sgc_txt_content, in, gmsgid);
-			isNeedBottom = 0;
-
+			DataUtil.readGroupMessage(sgc_txt_content, in, gmsgid,sendFlag);
 		}
 
 	}
@@ -351,7 +347,7 @@ public class SwingGroupChat extends BaseJFrame {
 
 			appendText(ownuser.getName() + " " + nowtime + " " + " £º" + "\n"
 					+ sgc_txt_send.getText().replace("\n", ""));
-			isNeedBottom = 0;
+			sendFlag.setIsNeedBottom(0);
 			sgc_txt_send.setText("");
 		} else {
 			sgc_txt_send.setText("");

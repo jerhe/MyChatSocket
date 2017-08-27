@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import com.etc.dao.GroupMessagesDao;
 import com.etc.dao.GroupsDao;
 import com.etc.dao.MessagesDao;
+import com.etc.entity.SendFlag;
 import com.etc.entity.Users;
 
 public class DataUtil {
@@ -27,12 +28,11 @@ public class DataUtil {
 	public static File file = new File("info.ini");
 	
 	
-	public static synchronized boolean setContent(JTextArea content,String in,boolean sendflag){
-		if(sendflag){
+	public static synchronized void setContent(JTextArea content,String in,SendFlag sendflag){
+		if(sendflag.isSendflag()){
 			content.append("\n" + in);
-			return true;
+			sendflag.setSendflag(false);
 		}
-		return false;
 	}
 	
 	/**
@@ -45,11 +45,12 @@ public class DataUtil {
 	 * @param msgid
 	 */
 	public static synchronized void readGroupMessage(JTextArea content,
-			String in, int gmsgid) {
+			String in, int gmsgid,SendFlag sendflag) {
 		GroupMessagesDao groupMessagesDao = new GroupMessagesDao();
 		if (groupMessagesDao.Read(gmsgid)) {
 			content.append("\n" + in);
 		}
+		sendflag.setIsNeedBottom(0);
 	}
 
 	/**
@@ -62,11 +63,12 @@ public class DataUtil {
 	 * @param msgid
 	 */
 	public static synchronized void readMessage(JTextArea content, String in,
-			int msgid) {
+			int msgid,SendFlag sendflag) {
 		MessagesDao messagesDao = new MessagesDao();
 		if (messagesDao.isReadById(msgid)) {
 			content.append("\n" + in);
 			messagesDao.setRead(msgid);
+			sendflag.setIsNeedBottom(0);
 		}
 	}
 

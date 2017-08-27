@@ -208,7 +208,7 @@ public class SwingHome extends BaseJFrame {
 		sh_btn_menu.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				m_popupMenu.show(sh_btn_menu, -60, -60);
+				m_popupMenu.show(sh_btn_menu, -80, -90);
 			}
 		});
 		contentPane.add(sh_btn_menu);
@@ -379,7 +379,7 @@ public class SwingHome extends BaseJFrame {
 		});
 		
 		JMenuItem MenItem2 = new JMenuItem();
-		MenItem2.setText("  修改资料   ");
+		MenItem2.setText("修改资料 ");
 		MenItem2.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				// 该操作需要做的事
@@ -389,7 +389,7 @@ public class SwingHome extends BaseJFrame {
 			}
 		});
 		JMenuItem MenItem3 = new JMenuItem();
-		MenItem3.setText("  切换用户   ");
+		MenItem3.setText("切换用户 ");
 		MenItem3.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				// 该操作需要做的事
@@ -402,7 +402,7 @@ public class SwingHome extends BaseJFrame {
 		});
 
 		JMenuItem MenItem4 = new JMenuItem();
-		MenItem4.setText("  退出   ");
+		MenItem4.setText("退出 ");
 		MenItem4.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				// 该操作需要做的事

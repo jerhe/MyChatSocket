@@ -31,6 +31,7 @@ import javax.swing.JTextArea;
 import com.etc.base.BaseJFrame;
 import com.etc.dao.MessagesDao;
 import com.etc.entity.Messages;
+import com.etc.entity.SendFlag;
 import com.etc.entity.Users;
 import com.etc.tool.ChatManager;
 import com.etc.util.DataUtil;
@@ -62,8 +63,7 @@ public class SwingSingleChat extends BaseJFrame {
 	private Socket socket;
 	private ArrayList<Messages> unreadMessages;
 	private JPanel panel;
-	private int isNeedBottom;
-	private boolean sendflag;
+	private SendFlag sendFlag = new SendFlag();
 	/**
 	 * ≥ı ºªØ¥∞ÃÂ
 	 */
@@ -160,13 +160,13 @@ public class SwingSingleChat extends BaseJFrame {
 				new AdjustmentListener() {
 					public void adjustmentValueChanged(AdjustmentEvent evt) {
 						if (evt.getAdjustmentType() == AdjustmentEvent.TRACK
-								&& isNeedBottom <= 3) {
+								&& sendFlag.getIsNeedBottom() <= 3) {
 							scrollPane.getVerticalScrollBar().setValue(
 									scrollPane.getVerticalScrollBar()
 											.getModel().getMaximum()
 											- scrollPane.getVerticalScrollBar()
 													.getModel().getExtent());
-							isNeedBottom++;
+							sendFlag.addIsNeedBottom();
 						}
 					}
 				});
@@ -249,9 +249,7 @@ public class SwingSingleChat extends BaseJFrame {
 	 */
 	@Override
 	public void appendText(String in) {
-		if(DataUtil.setContent(ssc_txt_content, in, sendflag)){
-			isNeedBottom=0;
-		}
+		DataUtil.setContent(ssc_txt_content, in, sendFlag);
 	}
 
 	/**
@@ -262,10 +260,10 @@ public class SwingSingleChat extends BaseJFrame {
 	@Override
 	public void appendTextother(String in, String fromname, String toname,
 			int msgid) {
+		
 		if (toname.equals(ownuser.getName())
 				&& fromname.equals(tousers.getName())) {
-			DataUtil.readMessage(ssc_txt_content, in, msgid);
-			isNeedBottom = 0;
+			DataUtil.readMessage(ssc_txt_content, in, msgid,sendFlag);
 		}
 
 	}
@@ -310,7 +308,7 @@ public class SwingSingleChat extends BaseJFrame {
 			ChatManager.getCM().send(sendString);
 
 			// System.out.println(textArea.getText());
-			sendflag=true;
+			sendFlag.setSendflag(true);
 			appendText(ownuser.getName() + " " + nowtime + " " + "£∫" + "\n"
 					+ ssl_txt_send.getText());
 			ssl_txt_send.setText("");
