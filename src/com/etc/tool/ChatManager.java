@@ -23,9 +23,7 @@ public class ChatManager {
 
 	private ChatManager() {
 	}
-
 	private static final ChatManager instance = new ChatManager();
-
 	public static ChatManager getCM() {
 		return instance;
 	}
@@ -47,7 +45,6 @@ public class ChatManager {
 		windowlist.add(window);
 
 	}
-
 	public void connect(String ip, String name,Socket s) {
 		this.IP = ip;
 		this.Name = name;
@@ -79,8 +76,10 @@ public class ChatManager {
 						 * ÈºÏûÏ¢
 						 * msgid ownuser.getName() groupid           nowtime ssl_txt_send.getText()
 						 */
+						
 						for (BaseJFrame w : windowlist) {
 							window=w;
+							System.out.println("***************"+windowlist.size());
 							window.appendTextother(newStr[1] + newStr[3] + ":\n"
 									+ newStr[4],newStr[1],newStr[2],
 									Integer.valueOf(newStr[0]));
@@ -104,7 +103,6 @@ public class ChatManager {
 			}
 		}.start();
 	}
-
 	public void send(String out) {
 		if (writer != null) {
 

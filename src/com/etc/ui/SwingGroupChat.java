@@ -75,6 +75,7 @@ public class SwingGroupChat extends BaseJFrame {
 	private JPanel panel;
 	private JScrollPane scrollPane_2;
 	private int isNeedBottom;
+	private boolean sendflag=false;
 
 	/**
 	 * 构造函数
@@ -181,7 +182,8 @@ public class SwingGroupChat extends BaseJFrame {
 							scrollPane_2.getVerticalScrollBar().setValue(
 									scrollPane_2.getVerticalScrollBar()
 											.getModel().getMaximum()
-											- scrollPane_2.getVerticalScrollBar()
+											- scrollPane_2
+													.getVerticalScrollBar()
 													.getModel().getExtent());
 							isNeedBottom++;
 						}
@@ -235,7 +237,7 @@ public class SwingGroupChat extends BaseJFrame {
 							+ groups.getGroupid() + "@ " + nowtime + " @"
 							+ sgc_txt_send.getText();
 					ChatManager.getCM().send(sendString);
-
+					sendflag=true;
 					appendText(ownuser.getName() + " " + nowtime + " " + " ："
 							+ "\n" + sgc_txt_send.getText());
 					sgc_txt_send.setText("");
@@ -272,6 +274,7 @@ public class SwingGroupChat extends BaseJFrame {
 					send();
 				}
 			}
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -288,19 +291,19 @@ public class SwingGroupChat extends BaseJFrame {
 	 * @param string
 	 */
 	@Override
-	public void appendText(String in) {
-		sgc_txt_content.append("\n" + in);
-		isNeedBottom=0;
-
+	public void appendText(String in) {	
+		if(DataUtil.setContent(sgc_txt_content, in, sendflag)){
+			isNeedBottom=0;
+		}
 	}
 
 	@Override
 	public void appendTextother(String in, String fromnname, String groupid,
 			int gmsgid) {
 		if (groupid.equals(groups.getGroupid())) {
-			sgc_txt_content.append("\n" + in);
-			isNeedBottom=0;
-			groupMessagesDao.setRead(gmsgid);
+			DataUtil.readGroupMessage(sgc_txt_content, in, gmsgid);
+			isNeedBottom = 0;
+
 		}
 
 	}
@@ -317,7 +320,8 @@ public class SwingGroupChat extends BaseJFrame {
 		 */
 		try {
 			socket = new Socket(DataUtil.IPSTRING, 8066);
-			ChatManager.getCM().connect(DataUtil.IPSTRING, ownuser.getName(), socket);
+			ChatManager.getCM().connect(DataUtil.IPSTRING, ownuser.getName(),
+					socket);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -336,7 +340,8 @@ public class SwingGroupChat extends BaseJFrame {
 			String nowtime = DataUtil.dateToString(now);
 			// 保存信息到数据库
 			GroupMessages gmsg = new GroupMessages(ownuser.getName(),
-					groups.getGroupid(), sgc_txt_send.getText(), nowtime, 1);
+					groups.getGroupid(), sgc_txt_send.getText(), nowtime,
+					groupMember.size()-1);
 			int gmsgid = groupMessagesDao.saveGroupMessages(gmsg);
 
 			String sendString = gmsgid + "@" + ownuser.getName() + "@"
@@ -346,7 +351,7 @@ public class SwingGroupChat extends BaseJFrame {
 
 			appendText(ownuser.getName() + " " + nowtime + " " + " ：" + "\n"
 					+ sgc_txt_send.getText().replace("\n", ""));
-			isNeedBottom=0;
+			isNeedBottom = 0;
 			sgc_txt_send.setText("");
 		} else {
 			sgc_txt_send.setText("");

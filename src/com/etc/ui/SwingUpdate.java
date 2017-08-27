@@ -124,6 +124,7 @@ public class SwingUpdate extends BaseJFrame {
 		getContentPane().add(su_jl_remark);
 
 		su_txt_name = new JTextField();
+		su_txt_name.setEnabled(false);
 		su_txt_name.setEditable(false);
 		su_txt_name.setBounds(131, 155, 157, 21);
 		getContentPane().add(su_txt_name);

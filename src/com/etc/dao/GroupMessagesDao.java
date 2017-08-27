@@ -55,9 +55,22 @@ public class GroupMessagesDao extends DBUTIL {
 	 * 
 	 * @param msg
 	 */
-	public void setRead(int gmsgid) {
-		String sql = "update groupmessages set isread = 0 where id =?";
-		execUpdate(sql, gmsgid);
+	public boolean Read(int gmsgid) {
+		String sql ="select isread from groupmessages where id =?";
+		CachedRowSet crs= execQuery(sql, gmsgid);
+		int read = 0;
+		try {
+			if(crs.next()){
+				if((read=crs.getInt("isread"))==0){
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		String sql2 = "update groupmessages set isread = ? where id =?";
+		execUpdate(sql2, read,gmsgid);
+		return true;
 	}
 
 	/**
@@ -66,9 +79,9 @@ public class GroupMessagesDao extends DBUTIL {
 	 * @return
 	 */
 	public int saveGroupMessages(GroupMessages gmsg) {
-		String sql = "insert into groupmessages values(null,?,?,?,?,1)";
+		String sql = "insert into groupmessages values(null,?,?,?,?,?)";
 		execUpdate(sql, gmsg.getFromname(), gmsg.getGroupid(), gmsg.getContent(),
-				gmsg.getSendtime());
+				gmsg.getSendtime(),gmsg.getIsread());
 		String sql1 = "select id from groupmessages where fromname=? and togroupid =? and sendtime=?";
 		CachedRowSet crs= execQuery(sql1, gmsg.getFromname(),gmsg.getGroupid(),gmsg.getSendtime());
 		try {

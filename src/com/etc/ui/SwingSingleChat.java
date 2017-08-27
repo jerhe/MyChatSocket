@@ -63,7 +63,7 @@ public class SwingSingleChat extends BaseJFrame {
 	private ArrayList<Messages> unreadMessages;
 	private JPanel panel;
 	private int isNeedBottom;
-
+	private boolean sendflag;
 	/**
 	 * 初始化窗体
 	 */
@@ -97,7 +97,7 @@ public class SwingSingleChat extends BaseJFrame {
 						"提示", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
-					// frame.dispose();
+					//frame.dispose();
 					frame.setVisible(false);
 				}
 			}
@@ -243,17 +243,15 @@ public class SwingSingleChat extends BaseJFrame {
 	}
 
 	/**
-	 * 发送设置内容框
+	 * 发送送是设置内容框设置内容框
 	 * 
 	 * @param string
 	 */
 	@Override
 	public void appendText(String in) {
-		// int row=ssc_txt_content.getLineStartOffset();
-		// ssc_txt_content.setCaretPosition(row);
-		// ssc_txt_content.set
-		ssc_txt_content.append("\n" + in);
-		isNeedBottom=0;
+		if(DataUtil.setContent(ssc_txt_content, in, sendflag)){
+			isNeedBottom=0;
+		}
 	}
 
 	/**
@@ -266,12 +264,8 @@ public class SwingSingleChat extends BaseJFrame {
 			int msgid) {
 		if (toname.equals(ownuser.getName())
 				&& fromname.equals(tousers.getName())) {
-			MessagesDao messagesDao = new MessagesDao();
-			if (messagesDao.isReadById(msgid)) {
-				ssc_txt_content.append("\n" + in);
-				isNeedBottom=0;
-				messagesDao.setRead(msgid);
-			}
+			DataUtil.readMessage(ssc_txt_content, in, msgid);
+			isNeedBottom = 0;
 		}
 
 	}
@@ -316,6 +310,7 @@ public class SwingSingleChat extends BaseJFrame {
 			ChatManager.getCM().send(sendString);
 
 			// System.out.println(textArea.getText());
+			sendflag=true;
 			appendText(ownuser.getName() + " " + nowtime + " " + "：" + "\n"
 					+ ssl_txt_send.getText());
 			ssl_txt_send.setText("");

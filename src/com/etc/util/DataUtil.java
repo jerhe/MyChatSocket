@@ -17,25 +17,73 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.etc.dao.GroupMessagesDao;
+import com.etc.dao.GroupsDao;
 import com.etc.dao.MessagesDao;
 import com.etc.entity.Users;
 
 public class DataUtil {
-	public static String IPSTRING="127.0.0.1"; 
+	public static String IPSTRING = "127.0.0.1";
 	public static File file = new File("info.ini");
+	
+	
+	public static synchronized boolean setContent(JTextArea content,String in,boolean sendflag){
+		if(sendflag){
+			content.append("\n" + in);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 设置同步群聊接受消息
+	 * 
+	 * @param content
+	 * @param in
+	 * @param fromname
+	 * @param toname
+	 * @param msgid
+	 */
+	public static synchronized void readGroupMessage(JTextArea content,
+			String in, int gmsgid) {
+		GroupMessagesDao groupMessagesDao = new GroupMessagesDao();
+		if (groupMessagesDao.Read(gmsgid)) {
+			content.append("\n" + in);
+		}
+	}
+
+	/**
+	 * 设置同步单聊接受消息
+	 * 
+	 * @param content
+	 * @param in
+	 * @param fromname
+	 * @param toname
+	 * @param msgid
+	 */
+	public static synchronized void readMessage(JTextArea content, String in,
+			int msgid) {
+		MessagesDao messagesDao = new MessagesDao();
+		if (messagesDao.isReadById(msgid)) {
+			content.append("\n" + in);
+			messagesDao.setRead(msgid);
+		}
+	}
+
 	/**
 	 * 把用户和密码存到数据库中
+	 * 
 	 * @return
 	 */
-	public static Users fromFile(){
-		Users u=null;
-		FileInputStream fis=null;
-		ObjectInputStream ois=null;
-		if(file.exists()){
+	public static Users fromFile() {
+		Users u = null;
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		if (file.exists()) {
 			try {
 				fis = new FileInputStream(file);
 				ois = new ObjectInputStream(fis);
-				u=(Users)ois.readObject();
+				u = (Users) ois.readObject();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -45,8 +93,8 @@ public class DataUtil {
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}finally{
-				if(ois!=null){
+			} finally {
+				if (ois != null) {
 					try {
 						ois.close();
 					} catch (IOException e) {
@@ -54,7 +102,7 @@ public class DataUtil {
 						e.printStackTrace();
 					}
 				}
-				if(fis!=null){
+				if (fis != null) {
 					try {
 						fis.close();
 					} catch (IOException e) {
@@ -63,18 +111,17 @@ public class DataUtil {
 					}
 				}
 			}
-			
+
 		}
-		
-		
+
 		return u;
 	}
-	
-	public static void toFile(Users u){
-		FileOutputStream fos=null;
-		ObjectOutputStream oos=null;
-		if(file.exists()){
-			
+
+	public static void toFile(Users u) {
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		if (file.exists()) {
+
 			try {
 				fos = new FileOutputStream(file);
 				oos = new ObjectOutputStream(fos);
@@ -83,8 +130,8 @@ public class DataUtil {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}finally{
-				if(oos!=null){
+			} finally {
+				if (oos != null) {
 					try {
 						oos.close();
 					} catch (IOException e) {
@@ -92,7 +139,7 @@ public class DataUtil {
 						e.printStackTrace();
 					}
 				}
-				if(fos!=null){
+				if (fos != null) {
 					try {
 						fos.close();
 					} catch (IOException e) {
@@ -101,8 +148,8 @@ public class DataUtil {
 					}
 				}
 			}
-	        
-		}else{
+
+		} else {
 			try {
 				file.createNewFile();
 				try {
@@ -113,8 +160,8 @@ public class DataUtil {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
-				}finally{
-					if(oos!=null){
+				} finally {
+					if (oos != null) {
 						try {
 							oos.close();
 						} catch (IOException e) {
@@ -122,7 +169,7 @@ public class DataUtil {
 							e.printStackTrace();
 						}
 					}
-					if(fos!=null){
+					if (fos != null) {
 						try {
 							fos.close();
 						} catch (IOException e) {
@@ -136,22 +183,25 @@ public class DataUtil {
 			}
 		}
 	}
+
 	/**
 	 * 时间日期 转字符日期
+	 * 
 	 * @param date
 	 * @return
 	 */
-	public static String dateToString(Date date){
+	public static String dateToString(Date date) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return format.format(date);
 	}
-	
+
 	/**
 	 * 字符日期转时间日期
+	 * 
 	 * @param s
 	 * @return
 	 */
-	public static Date stringToDate(String s){
+	public static Date stringToDate(String s) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			return format.parse(s);
@@ -160,22 +210,25 @@ public class DataUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 显示消息
-	 * @param msg 消息
+	 * 
+	 * @param msg
+	 *            消息
 	 */
-	public static void showMessage(String msg){
+	public static void showMessage(String msg) {
 		JOptionPane.showMessageDialog(null, msg);
 	}
-	
+
 	/**
 	 * 显示提示窗口
+	 * 
 	 * @param msg
 	 */
-	public static void showComfirm(String msg){
-		JOptionPane.showConfirmDialog(null, msg, "提示消息",JOptionPane.OK_CANCEL_OPTION);
+	public static void showComfirm(String msg) {
+		JOptionPane.showConfirmDialog(null, msg, "提示消息",
+				JOptionPane.OK_CANCEL_OPTION);
 	}
-	
 
 }
