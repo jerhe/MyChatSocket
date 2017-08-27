@@ -292,7 +292,9 @@ public class SwingGroupChat extends BaseJFrame {
 	 */
 	@Override
 	public void appendText(String in) {	
-		DataUtil.setContent(sgc_txt_content, in,sendFlag);
+		//DataUtil.setContent(sgc_txt_content, in,sendFlag);
+		sgc_txt_content.append("\n" + in);
+		sendFlag.setSendflag(false);
 	}
 
 	@Override
